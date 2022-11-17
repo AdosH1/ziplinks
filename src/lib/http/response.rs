@@ -1,9 +1,8 @@
-use crate::data::http::request;
+use crate::data::http::request::Method;
 use crate::data::http::response;
 use crate::data::http::response::Status;
 use crate::io::file::load_template;
-
-use super::request::triage_request;
+use crate::lib::http::request;
 
 fn create_response(status: response::Status, content: String) -> String {
     format!(
@@ -28,12 +27,15 @@ fn try_create_response(status: Status, filename: &str) -> String {
 }
 
 pub fn triage_response(buffer: &[u8; 1024]) -> String {
+    let (_method, _path, _body) = request::parse(&buffer);
+    if _method.is_none() || _path.is_none() {
+        return try_create_response(response::Status::bad_request, "404.html");
+    }
+    let method = _method.unwrap();
+    let path = _path.unwrap();
 
-    triage_request(&buffer);
-
-    if buffer.starts_with(request::Request::home.value()) {
-        try_create_response(response::Status::ok, "hello.html")
-    } else {
-        try_create_response(response::Status::not_found, "404.html")
+    match (method, path.as_str()) {
+        (Method::GET, "/") => try_create_response(response::Status::ok, "index.html"),
+        _ => try_create_response(response::Status::not_found, "404.html"),
     }
 }
