@@ -68,10 +68,9 @@ fn get_body(raw_body: &str) -> request::Body {
     request::Body { body }
 }
 
-pub fn parse(buffer: &[u8; 1024]) -> (Option<request::Method>, Option<String>, Option<String>) {
-    let v = buffer.to_vec();
-    let req = str::from_utf8(&v).unwrap();
-    let split: Vec<&str> = req.split("\r\n\r\n").collect();
+pub fn parse(buffer: String) -> (Option<request::Method>, Option<String>, Option<String>) {
+    let split: Vec<&str> = buffer.as_str().split("\r\n\r\n").collect();
+    println!("Split: {:#?}", &split);
 
     let header = match split.get(0) {
         Some(raw_header) => get_header(raw_header),

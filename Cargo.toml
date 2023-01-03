@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1.0.61" }
+random-string = { version = "1.0" }
