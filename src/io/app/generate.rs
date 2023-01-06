@@ -42,7 +42,7 @@ pub fn generate_unique_sub_url() -> String {
 
 pub fn generate_links(body : String) -> Vec<Link> {
     let b : String = body.chars().skip(6).collect();
-    let v: Vec<&str> = b.split("%0D%0A").collect();
+    let v: Vec<&str> = b.split("\r\n").collect();
     println!("Vec: {:#?}", &v);
     let mut links = Vec::new();
 

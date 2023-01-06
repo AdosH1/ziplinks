@@ -6,6 +6,7 @@ use lib::server::threadpool::ThreadPool;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::str;
+use urlencoding::decode;
 
 fn main() {
     let pool = ThreadPool::new(1);
@@ -38,9 +39,10 @@ fn handle_connection(mut stream: TcpStream) {
     stream.read(&mut buffer);
 
     let b = buffer.to_vec();
-    let s = str::from_utf8(&b).unwrap();
+    let s = str::from_utf8(&b).unwrap().to_string();
+    let decoded = decode(&s).unwrap().into_owned();
 
-    let response = triage_response(s.to_string());
+    let response = triage_response(decoded);
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
