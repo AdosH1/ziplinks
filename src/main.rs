@@ -5,9 +5,11 @@ use lib::http::response::triage_response;
 use lib::server::threadpool::ThreadPool;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
+use std::str;
+use urlencoding::decode;
 
 fn main() {
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(1);
 
     let listener_result = TcpListener::bind("127.0.0.1:7878");
     match listener_result {
@@ -36,7 +38,11 @@ fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
     stream.read(&mut buffer);
 
-    let response = triage_response(&buffer);
+    let b = buffer.to_vec();
+    let s = str::from_utf8(&b).unwrap().to_string();
+    let decoded = decode(&s).unwrap().into_owned();
+
+    let response = triage_response(decoded);
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
