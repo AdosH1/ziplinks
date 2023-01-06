@@ -1,6 +1,8 @@
 use crate::lib::server::worker::{Job, Worker};
 use std::sync::{mpsc, Arc, Mutex};
 
+use std::collections::HashMap;
+use crate::data::link::Link;
 pub struct ThreadPool {
     workers: Vec<Worker>,
     sender: Option<mpsc::Sender<Job>>,

@@ -8,6 +8,18 @@ pub enum Method {
     UNKNOWN,
 }
 
+impl Method {
+    pub fn eq(&self, other: &Self) -> bool {
+
+        match (self, other) {
+            (Method::GET, Method::GET) => true,
+            (Method::POST, Method::POST) => true,
+            (Method::UNKNOWN, Method::UNKNOWN) => true,
+            _ => false
+        }
+    }
+}
+
 pub fn get_method(s: &str) -> Method {
     match s {
         "GET" => Method::GET,
