@@ -9,8 +9,7 @@ pub enum Method {
 }
 
 impl Method {
-    pub 
-    fn eq(&self, other: &Self) -> bool {
+    pub fn eq(&self, other: &Self) -> bool {
 
         match (self, other) {
             (Method::GET, Method::GET) => true,
