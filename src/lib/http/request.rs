@@ -70,7 +70,6 @@ fn get_body(raw_body: &str) -> request::Body {
 
 pub fn parse(buffer: String) -> (Option<request::Method>, Option<String>, Option<String>) {
     let split: Vec<&str> = buffer.as_str().split("\r\n\r\n").collect();
-    println!("Split: {:#?}", &split);
 
     let header = match split.get(0) {
         Some(raw_header) => get_header(raw_header),

@@ -7,7 +7,29 @@ use crate::io::file;
 use crate::data::link::Link;
 use crate::lib::html::generate::open_links;
 
-pub fn generate_link_webpage(sub_url : String,links : &Vec<Link>) -> anyhow::Result<String> {
+pub fn generate_link_referral_webpage(sub_url : &String) -> anyhow::Result<String> {
+
+    let mut webpage = String::new();
+    webpage.push_str("
+    <!DOCTYPE html>
+    <html lang='en'>
+        <head>
+            <meta charset='utf-8'>");
+            // Add things in the head here
+            webpage.push_str("
+        </head>
+    <body>");
+    // Add body things here
+    let body = format!("Please find your links here: http://localhost:7878/{}", &sub_url);
+    webpage.push_str(&body);
+    webpage.push_str("
+    </body>
+    </html>");
+
+    Ok(webpage)
+}
+
+pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
 
     let mut webpage = String::new();
     webpage.push_str("
@@ -21,13 +43,13 @@ pub fn generate_link_webpage(sub_url : String,links : &Vec<Link>) -> anyhow::Res
         </head>
     <body>");
     // Add body things here
-    let body = format!("Here is your unique sub-url: http://localhost:7878/{}", sub_url);
+    let body = format!("Enjoy!");
     webpage.push_str(&body);
     webpage.push_str("
     </body>
     </html>");
 
-    Ok(webpage)
+    webpage
 }
 
 pub fn generate_unique_sub_url() -> String {
@@ -37,7 +59,7 @@ pub fn generate_unique_sub_url() -> String {
     // todo : check if its unique against database (when we have one), if not - regen
     // worth figuring our when collision gets bad, increase length or better way of avoiding collisions
 
-    sub_url
+    format!("{}", sub_url)
 }
 
 pub fn generate_links(body : String) -> Vec<Link> {
