@@ -65,6 +65,9 @@ fn create_link_referral_response(body : String, mut links_hm : &Mutex<HashMap<St
 
 pub fn triage_response(buffer: String, mut links_hm : &Mutex<HashMap<String, Vec<Link>>>) -> String {
     let (_method, _path, _body) = request::parse(buffer);
+    println!("method: {:#?}", _method);
+    println!("path: {:#?}", _path);
+    println!("body: {:#?}", _body);
     if _method.is_none() || _path.is_none() {
         return try_create_response_from_file(response::Status::bad_request, "404.html");
     }
