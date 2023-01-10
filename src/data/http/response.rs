@@ -14,3 +14,23 @@ impl Status {
         }
     }
 }
+
+pub enum ContentType {
+    image_gif,
+    image_jpeg,
+    image_png,
+    text_html,
+    text_plain,
+}
+
+impl ContentType {
+    pub fn value(&self) -> &str {
+        match &*self {
+            ContentType::image_gif => "Content-Type: image/gif",
+            ContentType::image_jpeg => "Content-Type: image/jpeg",
+            ContentType::image_png => "Content-Type: image/png",
+            ContentType::text_html => "Content-Type: text/html",
+            ContentType::text_plain => "Content-Type: text/plain",
+        }
+    }
+}

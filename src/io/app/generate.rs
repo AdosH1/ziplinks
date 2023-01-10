@@ -111,7 +111,8 @@ pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
     <br/>
     <center>
         <h1>Enjoy!</h1>
-        <img src='/src/data/resource/marauder-starcraft.gif' alt='A marauder from the game Starcraft 2 dancing.'/>
+        <img src='/resource/images/marauder' alt='A marauder from the game Starcraft 2 dancing.'
+          style='background-color: #E7E7CE; padding: 20px; border-radius: 25px; width: 25%; height: 20%'/>
     </center>");
     webpage.push_str(&body);
 
@@ -138,12 +139,10 @@ pub fn generate_unique_sub_url() -> String {
 pub fn generate_links(body : String) -> Vec<Link> {
     let b : String = body.chars().skip(6).collect();
     let v: Vec<&str> = b.split("\r\n").collect();
-    println!("Vec: {:#?}", &v);
     let mut links = Vec::new();
 
     for link in v.iter() {
         let l = link.to_owned().to_owned();
-        println!("Link: {:#?}", &l);
         links.push(Link {url : l});
     }
     links
