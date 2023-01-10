@@ -48,8 +48,8 @@ fn handle_connection(mut stream: TcpStream, mut links_hm : &Mutex<HashMap<String
     let s = str::from_utf8(&b).unwrap().to_string();
     let decoded = decode(&s).unwrap().into_owned();
 
-    let response = triage_response(decoded, &links_hm);
-
-    stream.write(response.as_bytes()).unwrap();
+    let (headers, body) = triage_response(decoded, &links_hm);
+    stream.write(headers.as_bytes()).unwrap();
+    stream.write(&body).unwrap();
     stream.flush().unwrap();
 }
