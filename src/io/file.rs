@@ -6,7 +6,6 @@ use std::{fs, string};
 use crate::data::http::response::ContentType;
 
 pub fn read_file(path: PathBuf) -> anyhow::Result<Vec<u8>> {
-    //let content = fs::read_to_string(path)?;
     let content = fs::read(path)?;
     
     Ok(content)
