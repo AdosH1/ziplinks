@@ -50,7 +50,10 @@ pub fn generate_link_referral_webpage(sub_url : &String) -> anyhow::Result<Strin
     let body = format!("
     <center>
     <br/>
-    <p>Please find your links here: <a href='http://localhost:7878/{}'>http://localhost:7878/{}</a></p>
+    <br/>
+    <br/>
+    <p>Please find your links here: <a id='link' href='/{}'></a></p>
+    <script>document.getElementById('link').innerHTML = window.location.host + '/{}';</script>
     </center>", &sub_url, &sub_url);
     webpage.push_str(&body);
 
@@ -110,7 +113,7 @@ pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
     let body = format!("
     <br/>
     <center>
-        <h1>Enjoy!</h1>
+        <h2>Thank you for using ziplinks!</h2>
         <img src='/resource/images/marauder' alt='A marauder from the game Starcraft 2 dancing.'
           style='background-color: #E7E7CE; padding: 20px; border-radius: 25px; width: 25%; height: 20%'/>
     </center>");
