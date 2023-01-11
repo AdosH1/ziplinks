@@ -16,7 +16,7 @@ fn main() {
     let pool = ThreadPool::new(1);
     let mut links_hm : Mutex<HashMap<String, Vec<Link>>> = Mutex::new(HashMap::new());
 
-    let listener_result = TcpListener::bind("127.0.0.1:7878");
+    let listener_result = TcpListener::bind("0.0.0.0:7878");
     match listener_result {
         Ok(listener) => {
             for stream_result in listener.incoming() {
