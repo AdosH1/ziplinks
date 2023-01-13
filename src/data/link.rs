@@ -1,7 +1,7 @@
 use std::fmt;
 #[derive(Debug)]
 pub struct Link {
-    pub url : String
+    pub url: String,
 }
 
 impl fmt::Display for Link {

@@ -1,14 +1,8 @@
-use std::f32::consts::E;
-use std::io::Error;
-use anyhow::Result;
-use random_string::generate;
-
-use crate::io::file;
 use crate::data::link::Link;
 use crate::lib::html::generate::open_links;
+use random_string::generate;
 
-pub fn generate_link_referral_webpage(sub_url : &String) -> anyhow::Result<String> {
-
+pub fn generate_link_referral_webpage(sub_url: &String) -> anyhow::Result<String> {
     let mut webpage = String::new();
     webpage.push_str("
     <!DOCTYPE html>
@@ -47,30 +41,35 @@ pub fn generate_link_referral_webpage(sub_url : &String) -> anyhow::Result<Strin
             <div class='page-content'><!-- Your content goes here -->");
 
     // Add body things here
-    let body = format!("
+    let body = format!(
+        "
     <center>
     <br/>
     <br/>
     <br/>
     <p>Please find your links here: <a id='link' href='/{}'></a></p>
     <script>document.getElementById('link').innerHTML = window.location.host + '/{}';</script>
-    </center>", &sub_url, &sub_url);
+    </center>",
+        &sub_url, &sub_url
+    );
     webpage.push_str(&body);
 
-    webpage.push_str("
+    webpage.push_str(
+        "
              </div>
         </main>
     </div>
     </body>
-    </html>");
+    </html>",
+    );
 
     Ok(webpage)
 }
 
-pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
-
+pub fn generate_link_opening_webpage(links: &Vec<Link>) -> String {
     let mut webpage = String::new();
-    webpage.push_str("
+    webpage.push_str(
+        "
     <!DOCTYPE html>
     <html lang='en'>
     <head>
@@ -78,10 +77,11 @@ pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
         <title>ziplinks</title>
         <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
         <link rel='stylesheet' href='https://code.getmdl.io/1.3.0/material.indigo-pink.min.css'>
-        <script defer src='https://code.getmdl.io/1.3.0/material.min.js'></script>");
+        <script defer src='https://code.getmdl.io/1.3.0/material.min.js'></script>",
+    );
     // <--- Add head stuff here --->
     webpage.push_str(&open_links(links).1);
-    
+
     webpage.push_str("</head>
     <body>
     <style>
@@ -108,7 +108,7 @@ pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
         </div>
         <main class='mdl-layout__content' style='background-color: #F5F5DC;'>
             <div class='page-content'><!-- Your content goes here -->");
-    
+
     // Add body things here
     let body = format!("
     <br/>
@@ -119,12 +119,14 @@ pub fn generate_link_opening_webpage(links : &Vec<Link>) -> String {
     </center>");
     webpage.push_str(&body);
 
-    webpage.push_str("
+    webpage.push_str(
+        "
         </div>
     </main>
     </div>
     </body>
-    </html>");
+    </html>",
+    );
 
     webpage
 }
@@ -139,14 +141,14 @@ pub fn generate_unique_sub_url() -> String {
     format!("{}", sub_url)
 }
 
-pub fn generate_links(body : String) -> Vec<Link> {
-    let b : String = body.chars().skip(6).collect();
+pub fn generate_links(body: String) -> Vec<Link> {
+    let b: String = body.chars().skip(6).collect();
     let v: Vec<&str> = b.split("\r\n").collect();
     let mut links = Vec::new();
 
     for link in v.iter() {
         let l = link.to_owned().to_owned();
-        links.push(Link {url : l});
+        links.push(Link { url: l });
     }
     links
 }
