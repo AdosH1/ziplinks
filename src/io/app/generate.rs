@@ -1,5 +1,5 @@
 use crate::data::link::Link;
-use crate::lib::html::generate::open_links;
+use crate::libs::html::generate::open_links;
 use random_string::generate;
 
 pub fn generate_link_referral_webpage(sub_url: &String) -> anyhow::Result<String> {

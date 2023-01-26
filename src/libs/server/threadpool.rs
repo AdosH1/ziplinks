@@ -1,4 +1,4 @@
-use crate::lib::server::worker::{Job, Worker};
+use crate::libs::server::worker::{Job, Worker};
 use std::sync::{mpsc, Arc, Mutex};
 
 pub struct ThreadPool {
