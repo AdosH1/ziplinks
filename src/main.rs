@@ -1,10 +1,10 @@
 mod data;
 mod io;
-mod lib;
+mod libs;
 
 use data::link::Link;
-use lib::http::response::triage_response;
-use lib::server::threadpool::ThreadPool;
+use libs::http::response::triage_response;
+use libs::server::threadpool::ThreadPool;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::str;
@@ -16,10 +16,12 @@ use std::sync::Mutex;
 fn main() {
     let pool = ThreadPool::new(1);
     let links_hm: Mutex<HashMap<String, Vec<Link>>> = Mutex::new(HashMap::new());
+    println!("Server starting up...");
 
-    let listener_result = TcpListener::bind("0.0.0.0:7878");
+    let listener_result = TcpListener::bind("0.0.0.0:80");
     match listener_result {
         Ok(listener) => {
+            println!("Listening...");
             for stream_result in listener.incoming() {
                 match stream_result {
                     Ok(stream) => {

@@ -7,7 +7,7 @@ use crate::io::app::generate::{
     generate_unique_sub_url,
 };
 use crate::io::file::load_file;
-use crate::lib::http::request;
+use crate::libs::http::request;
 
 use std::collections::HashMap;
 use std::sync::Mutex;
