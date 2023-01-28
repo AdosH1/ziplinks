@@ -3,7 +3,7 @@ mod io;
 mod libs;
 
 use data::link::Link;
-use libs::http::response::triage_response;
+use io::app::response::triage_response;
 use libs::server::threadpool::ThreadPool;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
@@ -14,14 +14,15 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 
 fn main() {
+    let addr = String::from("0.0.0.0:80");
     let pool = ThreadPool::new(1);
     let links_hm: Mutex<HashMap<String, Vec<Link>>> = Mutex::new(HashMap::new());
     println!("Server starting up...");
 
-    let listener_result = TcpListener::bind("0.0.0.0:80");
+    let listener_result = TcpListener::bind(&addr);
     match listener_result {
         Ok(listener) => {
-            println!("Listening...");
+            println!("Listening on {}...", addr);
             for stream_result in listener.incoming() {
                 match stream_result {
                     Ok(stream) => {
