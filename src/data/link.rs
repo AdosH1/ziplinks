@@ -1,13 +1,13 @@
 use std::fmt;
 #[derive(Debug)]
 pub struct Link {
-    pub url: String,
+    pub value: String,
 }
 
 impl Link {
     pub fn try_create(s: String) -> Option<Link> {
         match s.starts_with("http") {
-            true => Some(Link { url: s }),
+            true => Some(Link { value: s }),
             false => None,
         }
     }

@@ -1,6 +1,7 @@
-use crate::data::http::request::Method;
-use crate::data::http::response;
-use crate::data::http::response::{ContentType, Status};
+use crate::data::http::body::Body;
+use crate::data::http::content_type::ContentType;
+use crate::data::http::method::Method;
+use crate::data::http::status::Status;
 use crate::data::link::Link;
 use crate::io::app::generate::{
     generate_bad_request, generate_homepage, generate_internal_error, generate_link_opening_page,
@@ -32,14 +33,10 @@ fn insert_headers(
 fn internal_error() -> (String, Vec<u8>) {
     let internal_error = generate_internal_error();
     match internal_error {
-        Ok(page) => insert_headers(
-            response::Status::InternalError,
-            response::ContentType::TextHtml,
-            page,
-        ),
+        Ok(page) => insert_headers(Status::InternalError, ContentType::TextHtml, page),
         _ => insert_headers(
-            response::Status::InternalError,
-            response::ContentType::TextHtml,
+            Status::InternalError,
+            ContentType::TextHtml,
             String::from("Internal error").as_bytes().to_vec(),
         ),
     }
@@ -48,6 +45,11 @@ fn internal_error() -> (String, Vec<u8>) {
 fn not_found_error() -> (String, Vec<u8>) {
     let not_found_page = generate_not_found();
     format_header(Status::NotFound, not_found_page, ContentType::TextHtml)
+}
+
+fn bad_request_error() -> (String, Vec<u8>) {
+    let bad_request_page = generate_bad_request();
+    format_header(Status::BadRequest, bad_request_page, ContentType::TextHtml)
 }
 
 fn try_get_file(status: Status, filename: &str, content_type: ContentType) -> (String, Vec<u8>) {
@@ -92,10 +94,7 @@ fn try_retrieve_links(
     not_found_error()
 }
 
-fn try_create_links(
-    body: String,
-    links_hm: &Mutex<HashMap<String, Vec<Link>>>,
-) -> (String, Vec<u8>) {
+fn try_create_links(body: Body, links_hm: &Mutex<HashMap<String, Vec<Link>>>) -> (String, Vec<u8>) {
     let links = links::parse_body_to_links(body);
     let unique_hash = generate_sub_url();
 
@@ -129,21 +128,21 @@ pub fn triage_response(
     }
     let method = _method.unwrap();
     let path = _path.unwrap();
-    let body = _body.unwrap();
 
-    match (&method, path.as_str()) {
+    match (&method, path.value.as_str()) {
         (Method::GET, "/") => {
             let home = generate_homepage();
             format_header(Status::Ok, home, ContentType::TextHtml)
         }
-        (Method::GET, "/resource/images/marauder") => try_get_file(
-            response::Status::Ok,
-            "marauder-starcraft.gif",
-            ContentType::ImageGif,
-        ),
-        (Method::POST, "/generate") => try_create_links(body, &links_hm),
+        (Method::GET, "/resource/images/marauder") => {
+            try_get_file(Status::Ok, "marauder-starcraft.gif", ContentType::ImageGif)
+        }
+        (Method::POST, "/generate") => match _body {
+            Some(b) => try_create_links(b, &links_hm),
+            None => bad_request_error(),
+        },
         _ => {
-            let (headers, body) = try_retrieve_links(method, path, links_hm);
+            let (headers, body) = try_retrieve_links(method, path.value, links_hm);
             (headers, body)
         }
     }

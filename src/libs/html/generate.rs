@@ -9,7 +9,7 @@ pub fn open_links(links: &Vec<Link>) -> (usize, String) {
     links_str.push_str("<script type='text/javascript'>");
     links_str.push_str("window.close();");
     for link in links {
-        let t = format!("window.open('{}');", link.url);
+        let t = format!("window.open('{}');", link.value);
         links_str.push_str(&t);
     }
 
