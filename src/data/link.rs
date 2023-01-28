@@ -4,6 +4,15 @@ pub struct Link {
     pub url: String,
 }
 
+impl Link {
+    pub fn try_create(s: String) -> Option<Link> {
+        match s.starts_with("http") {
+            true => Some(Link { url: s }),
+            false => None,
+        }
+    }
+}
+
 impl fmt::Display for Link {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Link: {}", self)

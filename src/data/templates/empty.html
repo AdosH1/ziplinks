@@ -8,13 +8,11 @@
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
   </head>
   <body>
-
     <style>
       .demo-layout-waterfall .mdl-layout__header-row .mdl-navigation__link:last-of-type  {
         padding-right: 0;
       }
     </style>
-      
       <div class="demo-layout-waterfall mdl-layout mdl-js-layout">
         <header class="mdl-layout__header mdl-layout__header--waterfall" style="background-color: #E1C699;">
           <!-- Top row, always visible -->
@@ -33,21 +31,7 @@
         </div>
         <main class="mdl-layout__content" style="background-color: #F5F5DC;">
           <div class="page-content"><!-- Your content goes here -->
-            <center>
-            <br/>
-            <p>Please enter the full url (including https://) in the field below, with a new link on each line.</p>
-            <form method="POST" action="/generate">
-              <div class="mdl-textfield mdl-js-textfield" style="background-color: #E7E7CE; padding: 20px; border-radius: 25px; width: 50%; height: 40%">
-                <textarea id="links" name="links" class="mdl-textfield__input" type="text" rows= "10" ></textarea>
-              </div>
-              <br/>
-              <br/>
-              <p><b>Disclaimer:</b> There are no guarantees on the longevity or stableness of ziplinks. Data may be deleted or removed at any point in time.</p>
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
-                Submit
-              </button>
-            </form>
-            </center>
+            
           </div>
         </main>
       </div>

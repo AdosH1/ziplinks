@@ -1,8 +1,8 @@
 pub enum Status {
     Ok,            //200
-    InternalError, //500
     BadRequest,    //400
     NotFound,      //404
+    InternalError, //500
 }
 
 impl Status {
