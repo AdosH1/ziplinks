@@ -1,4 +1,4 @@
-use crate::data::http::response::ContentType;
+use crate::data::http::content_type::ContentType;
 use crate::data::link::Link;
 use crate::io::file::load_file;
 use crate::libs::html::generate::open_links;

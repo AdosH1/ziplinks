@@ -1,7 +1,8 @@
+use crate::data::http::body::Body;
 use crate::data::link::Link;
 
-pub fn parse_body_to_links(body: String) -> Vec<Link> {
-    let b: String = body.chars().skip(6).collect();
+pub fn parse_body_to_links(body: Body) -> Vec<Link> {
+    let b: String = body.value.chars().skip(6).collect();
     let v: Vec<&str> = b.split("\r\n").collect();
     let mut links = Vec::new();
 

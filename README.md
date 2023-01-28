@@ -5,18 +5,18 @@ It can be used to share a batch of links easily, save workflows or whatever you 
 This was created to share reddit posts with my family when I visit, it is the server version of [fanout-links](https://github.com/AdosH1/fanout-links).
 
 ## Build / Run
-You may build the server via Rust or using the docker file.  
+You may build the server via image with make or with uncontainerized with Rust.  
+
+Make
+```
+make build
+make run
+```
 
 Rust
 ```rust
 cargo build
 cargo run
-```
-
-Docker
-```docker
-docker build -t ziplinks .
-docker run --rm -d -p 7878:80 ziplinks
 ```
 
 ## Todo

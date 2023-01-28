@@ -1,4 +1,7 @@
-use crate::data::http::request;
+use crate::data::http::body::Body;
+use crate::data::http::header::Header;
+use crate::data::http::method::Method;
+use crate::data::http::path::Path;
 use crate::libs::util::option;
 use std::collections::HashMap;
 use std::str;
@@ -28,12 +31,12 @@ fn get_raw<'a>(v: &Vec<&'a str>, index: usize) -> Option<Vec<&'a str>> {
     v.get(index).and_then(|i| Some(i.split(" ").collect()))
 }
 
-fn get_header(raw_header: &str) -> request::Header {
+fn parse_header(raw_header: &str) -> Option<Header> {
     let s: Vec<&str> = raw_header.split("\r\n").collect();
 
     let raw_method: Option<Vec<&str>> = get_raw(&s, 0);
-    let method = request::get_method_option(get_value(&raw_method, 0));
-    let path = get_value(&raw_method, 1);
+    let method = Method::try_create(get_value(&raw_method, 0));
+    let path = Path::try_create(get_value(&raw_method, 1));
     let protocol = get_value(&raw_method, 2);
 
     let mut headers = HashMap::new();
@@ -54,37 +57,30 @@ fn get_header(raw_header: &str) -> request::Header {
         i += 1;
     }
 
-    request::Header {
-        method,
-        path,
-        protocol,
-        headers: Some(headers),
-    }
+    Header::create(method, path, protocol, Some(headers))
 }
 
-fn get_body(raw_body: &str) -> request::Body {
+fn get_body(raw_body: &str) -> Option<Body> {
     let body_str = Some(raw_body.trim_end_matches(char::from(0)));
     let body = option::str_to_string(body_str);
-    request::Body { body }
+    Body::try_create(body)
 }
 
-pub fn parse(buffer: String) -> (Option<request::Method>, Option<String>, Option<String>) {
+pub fn parse(buffer: String) -> (Option<Method>, Option<Path>, Option<Body>) {
     let split: Vec<&str> = buffer.as_str().split("\r\n\r\n").collect();
 
     let header = match split.get(0) {
-        Some(raw_header) => get_header(raw_header),
-        None => request::Header {
-            method: None,
-            path: None,
-            protocol: None,
-            headers: None,
-        },
+        Some(raw_header) => parse_header(raw_header),
+        None => None,
     };
 
     let body = match split.get(1) {
         Some(raw_body) => get_body(raw_body),
-        None => request::Body { body: None },
+        None => None,
     };
 
-    return (header.method, header.path, body.body);
+    match (header, body) {
+        (Some(head), bod) => (head.method, head.path, bod),
+        _ => (None, None, None),
+    }
 }
