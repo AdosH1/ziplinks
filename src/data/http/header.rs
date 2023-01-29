@@ -11,7 +11,7 @@ pub struct Header {
 }
 
 impl Header {
-    pub fn create(
+    pub fn try_create(
         method: Option<Method>,
         path: Option<Path>,
         protocol: Option<String>,
