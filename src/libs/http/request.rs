@@ -57,7 +57,7 @@ fn parse_header(raw_header: &str) -> Option<Header> {
         i += 1;
     }
 
-    Header::create(method, path, protocol, Some(headers))
+    Header::try_create(method, path, protocol, Some(headers))
 }
 
 fn get_body(raw_body: &str) -> Option<Body> {
