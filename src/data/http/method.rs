@@ -16,14 +16,10 @@ impl Method {
     }
 
     pub fn try_create(o: Option<String>) -> Option<Method> {
-        if let Some(s) = o {
-            match s.as_str() {
-                "GET" => Some(Method::GET),
-                "POST" => Some(Method::POST),
-                _ => Some(Method::UNKNOWN),
-            }
-        } else {
-            None
-        }
+        o.map(|m| match m.as_str() {
+            "GET" => Method::GET,
+            "POST" => Method::POST,
+            _ => Method::UNKNOWN,
+        })
     }
 }

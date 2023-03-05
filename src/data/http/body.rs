@@ -6,10 +6,7 @@ pub struct Body {
 
 impl Body {
     pub fn try_create(o: Option<String>) -> Option<Body> {
-        match o {
-            Some(s) => Some(Body { value: s }),
-            None => None,
-        }
+        o.map(|s| {Body {value: s}})
     }
 }
 
