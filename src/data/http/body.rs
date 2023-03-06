@@ -6,7 +6,7 @@ pub struct Body {
 
 impl Body {
     pub fn try_create(o: Option<String>) -> Option<Body> {
-        o.map(|s| {Body {value: s}})
+        o.map(|s| Body { value: s })
     }
 }
 
