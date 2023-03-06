@@ -106,6 +106,7 @@ pub fn generate_link_opening_page(links: &Vec<Link>) -> anyhow::Result<Vec<u8>> 
   <br/>
   <center>
       <h2>Thank you for using ziplinks!</h2>
+      <p>If you don't see any tabs opening, please enable pop-ups.</p>
       <img src='/resource/images/marauder' alt='A marauder from the game Starcraft 2 dancing.'
         style='background-color: #E7E7CE; padding: 20px; border-radius: 25px; width: 25%; height: 20%'/>
   </center>");

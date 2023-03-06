@@ -3,21 +3,32 @@ mod io;
 mod libs;
 
 use data::link::Link;
+use data::settings::Settings;
 use io::app::response::triage_response;
 use libs::server::threadpool::ThreadPool;
+
+use std::collections::HashMap;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::str;
+use std::sync::Mutex;
 use urlencoding::decode;
 
-use std::collections::HashMap;
-use std::sync::Mutex;
+const MAX_BUFFER_SIZE: usize = 32768;
 
 fn main() {
-    let addr = String::from("0.0.0.0:80");
-    let pool = ThreadPool::new(1);
+    let config = Settings::new();
+    let settings = match config {
+        Ok(s) => s,
+        Err(e) => {
+            println!("An error occured loading config: {}", e);
+            return;
+        }
+    };
+
+    let addr = format!("0.0.0.0:{}", settings.server.port);
+    let pool = ThreadPool::new(settings.server.num_threads);
     let links_hm: Mutex<HashMap<String, Vec<Link>>> = Mutex::new(HashMap::new());
-    println!("Server starting up...");
 
     let listener_result = TcpListener::bind(&addr);
     match listener_result {
@@ -43,7 +54,7 @@ fn main() {
 }
 
 fn handle_connection(mut stream: TcpStream, links_hm: &Mutex<HashMap<String, Vec<Link>>>) {
-    let mut buffer = [0; 1024];
+    let mut buffer = [0; MAX_BUFFER_SIZE];
     let _ = stream.read(&mut buffer);
 
     let b = buffer.to_vec();
