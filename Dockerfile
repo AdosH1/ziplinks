@@ -12,5 +12,6 @@ EXPOSE 80
 COPY --from=build ./target/x86_64-unknown-linux-gnu/release/ ./target/x86_64-unknown-linux-gnu/release/
 COPY --from=build ./src/data/templates/ ./src/data/templates/
 COPY --from=build ./src/data/resource/ ./src/data/resource/
+COPY --from=build ./config/ ./config/
 
 ENTRYPOINT ["/target/x86_64-unknown-linux-gnu/release/ziplinks"]

@@ -2,3 +2,6 @@
 num_threads = 1
 port = 8080
 
+[database]
+address = "redis://127.0.0.1/"
+database_type = "Memory"
