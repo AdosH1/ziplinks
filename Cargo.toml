@@ -11,3 +11,4 @@ random-string = { version = "1.0" }
 urlencoding = { version = "2.1.2" }
 config = { version = "0.13.3" }
 serde = { version = "1.0.152", features = ["derive"] }
+redis = { version = "0.22.3" }

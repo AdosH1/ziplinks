@@ -10,6 +10,8 @@ use crate::io::app::generate::{
 use crate::io::file::load_file;
 use crate::libs::http::request;
 use crate::libs::parse::links;
+use crate::data::settings::{Settings, DatabaseType};
+use crate::io::database::redis::{get_links, set_links};
 
 use std::collections::HashMap;
 use std::sync::Mutex;
@@ -68,25 +70,48 @@ fn format_header(
     }
 }
 
-fn try_retrieve_links(
+fn try_retrieve_links_page(
     method: Method,
     path: String,
+    settings : Settings,
     links_hm: &Mutex<HashMap<String, Vec<Link>>>,
 ) -> (String, Vec<u8>) {
-    let map = links_hm.lock().unwrap();
 
-    if method.eq(&Method::GET) && map.contains_key(&path) {
-        let links = map.get(&path).unwrap();
-        let contents = generate_link_opening_page(links);
+    if method.eq(&Method::GET) {
+        let map = links_hm.lock().unwrap();
+        let links_option = 
+            match settings.database.database_type {
+                DatabaseType::Memory => {
+                    let res = map.get(&path);
+                    match res {
+                        Some(v) => {
+                            let copy : Vec<Link> = v.into_iter().cloned().map(|x| x).collect();
+                            Some(copy)
+                        }
+                        None => None
+                    }
+                }
+                DatabaseType::Redis => {
+                    let res = get_links(path);
+                    match res {
+                        Ok(v) => {
+                            let copy : Vec<Link> = v.into_iter().map(|x| x).collect();
+                            Some(copy)
+                        },
+                        Err(e) => {
+                            println!("{:#?}", e);
+                            None
+                        }
+                    }
+                }
+            };
 
-        match contents {
-            Ok(body) => {
+        if let Some(links) = links_option {
+            let contents = generate_link_opening_page(&links);
+
+            if let Ok(body) = contents {
                 let (headers, body) = insert_headers(Status::Ok, ContentType::TextHtml, body);
                 return (headers, body);
-            }
-            Err(e) => {
-                println!("Error occurred: {:#?}", e);
-                return internal_error();
             }
         }
     }
@@ -94,15 +119,28 @@ fn try_retrieve_links(
     not_found_error()
 }
 
-fn try_create_links(body: Body, links_hm: &Mutex<HashMap<String, Vec<Link>>>) -> (String, Vec<u8>) {
+fn try_create_links(body: Body, settings : Settings, links_hm: &Mutex<HashMap<String, Vec<Link>>>) -> (String, Vec<u8>) {
     let links = links::parse_body_to_links(body);
     let unique_hash = generate_sub_url();
 
     let webpage = generate_link_page(&unique_hash);
 
-    let mut map = links_hm.lock().unwrap();
     let hash = format!("/{}", unique_hash);
-    map.insert(hash, links);
+
+    let res = match settings.database.database_type {
+        DatabaseType::Memory => {
+            let mut map = links_hm.lock().unwrap();
+            map.insert(hash, links);
+            Ok(())
+        }
+        DatabaseType::Redis => {
+            set_links(hash, links)
+        }
+    };
+
+    if let Err(e) = res {
+        return internal_error()
+    }
 
     match webpage {
         Ok(page) => insert_headers(Status::Ok, ContentType::TextHtml, page),
@@ -115,6 +153,7 @@ fn try_create_links(body: Body, links_hm: &Mutex<HashMap<String, Vec<Link>>>) ->
 
 pub fn triage_response(
     buffer: String,
+    settings: Settings,
     links_hm: &Mutex<HashMap<String, Vec<Link>>>,
 ) -> (String, Vec<u8>) {
     let (_method, _path, _body) = request::parse(buffer);
@@ -138,11 +177,11 @@ pub fn triage_response(
             try_get_file(Status::Ok, "marauder-starcraft.gif", ContentType::ImageGif)
         }
         (Method::POST, "/generate") => match _body {
-            Some(b) => try_create_links(b, &links_hm),
+            Some(b) => try_create_links(b, settings, &links_hm),
             None => bad_request_error(),
         },
         _ => {
-            let (headers, body) = try_retrieve_links(method, path.value, links_hm);
+            let (headers, body) = try_retrieve_links_page(method, path.value, settings, links_hm);
             (headers, body)
         }
     }

@@ -1,5 +1,8 @@
 use std::fmt;
-#[derive(Debug)]
+
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Link {
     pub value: String,
 }
@@ -10,6 +13,10 @@ impl Link {
             true => Some(Link { value: s }),
             false => None,
         }
+    }
+
+    pub fn to_string(&self) -> String {
+        self.value.clone()
     }
 }
 
